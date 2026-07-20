@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - TrackTv</title>
+    <link rel="stylesheet" href="/css/search-results.css">
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="logo">🎬 TRACKTV</a>
+        <form class="search-box" onsubmit="handleSearch(event)">
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Buscar série ou filme..." 
+                value="<%= query %>"
+                autocomplete="off"
+            >
+            <button type="submit" class="search-btn" title="Buscar">
+                🔍
+            </button>
+        </form>
+    </div>
+
+    <div class="results-header">
+        <div class="results-title"><%= message %></div>
+        <div class="results-count">
+            <% if (results.length > 0) { %>
+                <%= results.length %> resultado(s) encontrado(s)
+            <% } %>
+        </div>
+    </div>
+
+    <% if (results.length > 0) { %>
+        <div class="results-grid">
+            <% results.forEach(result => { %>
+                <div class="result-card">
+                    <div class="result-image">
+                        <% if (result.posterPath) { %>
+                            <img src="<%= result.posterPath %>" alt="<%= result.nome %>" onerror="this.style.display='none'">
+                        <% } else { %>
+                            📺
+                        <% } %>
+                    </div>
+                    <div class="result-info">
+                        <div class="result-type"><%= result.tipo.toUpperCase() %></div>
+                        <div class="result-title"><%= result.nome %></div>
+                        <div class="result-date">
+                            <% if (result.dataDeLancamento) { %>
+                                <%= new Date(result.dataDeLancamento).toLocaleDateString('pt-BR') %>
+                            <% } else { %>
+                                Data desconhecida
+                            <% } %>
+                        </div>
+                        <div class="result-description"><%= result.descricao %></div>
+                        <div class="result-rating">
+                            <% if (result.rating) { %>
+                                ⭐ <%= result.rating.toFixed(1) %>/10
+                            <% } else { %>
+                                ⭐ Sem rating
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-text">Nenhum resultado encontrado</div>
+            <div class="empty-subtext">Tente buscar com palavras-chave diferentes</div>
+            <a href="/" class="back-btn">← Voltar ao início</a>
+        </div>
+    <% } %>
+
+    <script>
+        function handleSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('searchInput').value.trim();
+            
+            if (query === '') {
+                alert('Por favor, digite algo para buscar');
+                return;
+            }
+
+            window.location.href = `/search?q=${encodeURIComponent(query)}`;
+        }
+    </script>
+</body>
+</html>
